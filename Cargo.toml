@@ -1,0 +1,37 @@
+[package]
+name = "bevy-rapier-baseball-flight"
+description = "Baseball flight simulation with Bevy and Rapier"
+version = "0.0.1-alpha.1"
+edition = "2021"
+exclude = ["/assets/", "/.github/", "/art/", "/examples/"]
+keywords = ["bevy", "avian", "baseball", "aerodynamics", "baseball-flight"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/slothman3878/bevy-avian-baseball-flight"
+readme = "readme.md"
+
+[profile.dev]
+opt-level = 1
+
+[profile.dev.package."*"]
+opt-level = 3
+
+[dependencies]
+bevy_rapier3d = { version = "^0.27.0", features = [
+  "simd-stable",
+  "debug-render-3d",
+] }
+bevy = { version = "^0.14.0", default-features = false, features = [
+  "dynamic_linking",
+  "bevy_state",
+  "bevy_asset",
+  "bevy_color",
+  "bevy_pbr",
+  "bevy_scene",
+  "x11",
+  "tonemapping_luts",
+] }
+
+[dev-dependencies]
+log = "^0.4.22"
+blenvy = { git = "https://github.com/kaosat-dev/Blenvy/", branch = "blenvy", version = "^0.1.0-alpha.1" }
+bevy_flycam = "^0.14.1"
