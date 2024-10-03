@@ -12,7 +12,8 @@ pub(crate) mod constants {
 
     pub(crate) const MASS: f32 = 0.145; // in kg
     pub(crate) const RADIUS: f32 = 0.037; // in m
-    pub(crate) const SEAM_R: f32 = (2. + 15. / 16.) / 2.; // in m
+
+    // pub(crate) const SEAM_R: f32 = (2. + 15. / 16.) / 2.; // in m
 
     // in pounds and ft/s
     pub(crate) const RHO: f64 = 0.074;

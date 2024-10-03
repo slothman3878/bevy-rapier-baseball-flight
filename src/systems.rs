@@ -37,7 +37,7 @@ pub(crate) fn _apply_physics_option_2(
     let delta_t = time_fixed.delta_seconds_f64() * timescale as f64;
     for (mut state, transform, mut velo, mut gravity_scale) in &mut query_baseball {
         if state.active {
-            let new_velo = state.update_state_and_get_velo(
+            let new_velo = state._update_state_and_get_velo(
                 &baseball_plugin_config,
                 transform
                     .translation
@@ -107,7 +107,6 @@ pub(crate) fn activate_aerodynamics(
             ball_physics_query.get_mut(ev.entity)
         {
             if !state.active {
-                info!("hello???");
                 // just in case
                 force.force = Vec3::ZERO;
                 gravity_scale.0 = 0.;
@@ -118,7 +117,7 @@ pub(crate) fn activate_aerodynamics(
                         .from_bevy_to_baseball_coord()
                         .as_dvec3(),
                     velo.linvel.from_bevy_to_baseball_coord().as_dvec3(),
-                    velo.angvel.as_dvec3(),
+                    velo.angvel.from_bevy_to_baseball_coord().as_dvec3(),
                     ev.seam_y_angle,
                     ev.seam_z_angle,
                 );

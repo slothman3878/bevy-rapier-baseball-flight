@@ -158,7 +158,7 @@ fn spawn_ball(
     let gyro_pole = GyroPole::default();
     let spin_efficiency: f32 = 1.0;
     let velocity: f32 = 96. * MPH_TO_FTS;
-    let spin_rate: f32 = -2400.;
+    let spin_rate: f32 = 2400.;
     let seam_z_angle: f32 = PI / 2.;
     let tilt = Tilt::from_hour_mintes(12, 0);
 

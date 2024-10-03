@@ -91,7 +91,7 @@ impl BaseballFlightState {
     }
 
     // option 2
-    pub(crate) fn update_state_and_get_velo(
+    pub(crate) fn _update_state_and_get_velo(
         &mut self,
         config: &BaseballPluginConfig,
         translation: DVec3,
