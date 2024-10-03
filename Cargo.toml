@@ -4,9 +4,9 @@ description = "Baseball flight simulation with Bevy and Rapier"
 version = "0.0.1-alpha.1"
 edition = "2021"
 exclude = ["/assets/", "/.github/", "/art/", "/examples/"]
-keywords = ["bevy", "avian", "baseball", "aerodynamics", "baseball-flight"]
+keywords = ["bevy", "rapier", "baseball", "aerodynamics", "baseball-flight"]
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/slothman3878/bevy-avian-baseball-flight"
+repository = "https://github.com/slothman3878/bevy-rapier-baseball-flight"
 readme = "readme.md"
 
 [profile.dev]
