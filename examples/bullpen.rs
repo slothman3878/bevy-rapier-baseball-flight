@@ -27,15 +27,15 @@ fn main() {
     app.insert_resource(Time::<Fixed>::from_hz(60.0));
 
     let mut rapier_config = RapierConfiguration::new(1.);
-    // rapier_config.timestep_mode = TimestepMode::Fixed {
-    //     dt: 1. / 60.,
-    //     substeps: 1,
-    // };
-    rapier_config.timestep_mode = TimestepMode::Variable {
-        max_dt: 1.0 / 60.0,
-        time_scale: 1.,
+    rapier_config.timestep_mode = TimestepMode::Fixed {
+        dt: 1. / 1000.,
         substeps: 1,
     };
+    // rapier_config.timestep_mode = TimestepMode::Variable {
+    //     max_dt: 1.0 / 60.0,
+    //     time_scale: 1.,
+    //     substeps: 1,
+    // };
 
     app.add_plugins(RapierPhysicsPlugin::<NoUserData>::default().with_default_system_setup(true))
         .insert_resource(rapier_config);
@@ -158,7 +158,7 @@ fn spawn_ball(
     let gyro_pole = GyroPole::default();
     let spin_efficiency: f32 = 1.0;
     let velocity: f32 = 96. * MPH_TO_FTS;
-    let spin_rate: f32 = 2400.;
+    let spin_rate: f32 = -2400.;
     let seam_z_angle: f32 = PI / 2.;
     let tilt = Tilt::from_hour_mintes(12, 0);
 
