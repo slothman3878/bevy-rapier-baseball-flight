@@ -1,7 +1,7 @@
 [package]
 name = "bevy-rapier-baseball-flight"
 description = "Baseball flight simulation with Bevy and Rapier"
-version = "0.0.1-alpha.2"
+version = "0.0.1-alpha.3"
 edition = "2021"
 exclude = ["/assets/", "/.github/", "/art/", "/examples/"]
 keywords = ["bevy", "rapier", "baseball", "aerodynamics", "baseball-flight"]
