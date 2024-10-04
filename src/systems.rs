@@ -21,15 +21,10 @@ pub(crate) fn _apply_physics_option_2(
     time_fixed: Res<Time<Fixed>>,
     rapier_config: Res<RapierConfiguration>,
     baseball_plugin_config: Res<BaseballPluginConfig>,
-    mut query_baseball: Query<(
-        &mut BaseballFlightState,
-        &Transform,
-        &mut Velocity,
-        &mut GravityScale,
-    )>,
+    mut query_baseball: Query<(&mut BaseballFlightState, &Transform, &mut Velocity)>,
 ) {
     let delta_t = get_delta_t(&time_fixed, &rapier_config);
-    for (mut state, transform, mut velo, mut gravity_scale) in &mut query_baseball {
+    for (mut state, transform, mut velo) in &mut query_baseball {
         if state.active {
             let new_velo = state._update_state_and_get_velo(
                 &baseball_plugin_config,
