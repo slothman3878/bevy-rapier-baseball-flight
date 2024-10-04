@@ -43,13 +43,56 @@ impl Plugin for BaseballFlightPlugin {
             ..default()
         });
 
+        app.configure_sets(
+            Update,
+            (
+                AeroActivationSet::PreActivation,
+                AeroActivationSet::Activation,
+                AeroActivationSet::PostActivation,
+            )
+                .chain(),
+        )
+        .add_systems(
+            Update,
+            (activate_aerodynamics,)
+                .chain()
+                .in_set(AeroActivationSet::Activation),
+        );
+
+        app.configure_sets(
+            Update,
+            (
+                AeroDeactivationSet::PreDeactivation,
+                AeroDeactivationSet::Deactivation,
+                AeroDeactivationSet::PostDeactivation,
+            )
+                .chain(),
+        )
+        .add_systems(
+            Update,
+            (disable_aerodynamics,)
+                .chain()
+                .in_set(AeroDeactivationSet::Deactivation),
+        );
+
         // app.add_systems(Update, _apply_physics_option_1);
         // app.add_systems(Update, _apply_physics_option_2);
         app.add_systems(Update, _apply_physics_option_3);
-
-        app.add_systems(Update, activate_aerodynamics);
-        app.add_systems(Update, disable_aerodynamics);
     }
+}
+
+#[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
+pub enum AeroActivationSet {
+    PreActivation,
+    Activation,
+    PostActivation,
+}
+
+#[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
+pub enum AeroDeactivationSet {
+    PreDeactivation,
+    Deactivation,
+    PostDeactivation,
 }
 
 #[derive(Debug, Clone, Copy, Reflect)]

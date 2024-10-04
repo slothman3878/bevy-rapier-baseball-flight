@@ -53,6 +53,8 @@ pub(crate) fn _apply_physics_option_3(
     )>,
 ) {
     let delta_t = get_delta_t(&time_fixed, &rapier_config);
+    // info!("time fixed {:?}", time_fixed.delta_seconds_f64());
+    // info!("delta_t {:?}", delta_t);
     for (mut state, transform, velo, mut force) in &mut query_baseball {
         if state.active {
             let a = state.update_state_and_get_acceleration(
@@ -72,32 +74,28 @@ pub(crate) fn _apply_physics_option_3(
 }
 
 fn get_delta_t(time_fixed: &Res<Time<Fixed>>, rapier_config: &Res<RapierConfiguration>) -> f64 {
-    match rapier_config.timestep_mode {
+    let delta_t = match rapier_config.timestep_mode {
         TimestepMode::Variable { time_scale, .. } => {
             time_scale as f64 * time_fixed.delta_seconds_f64()
         }
         TimestepMode::Fixed { dt, .. } => dt as f64,
         _ => 1.,
-    }
+    };
+    (delta_t * 1000.).floor() / 1000.
 }
 
 pub(crate) fn activate_aerodynamics(
-    mut ball_physics_query: Query<(
-        &mut BaseballFlightState,
-        &mut ExternalForce,
-        &Transform,
-        &Velocity,
-    )>,
+    mut ball_physics_query: Query<(&mut BaseballFlightState, &Transform, &Velocity)>,
     mut ev_activate_aerodynamics_event: EventReader<ActivateAerodynamicsEvent>,
     mut ev_post_activate_aerodynamics_event: EventWriter<PostActivateAerodynamicsEvent>,
 ) {
     for ev in ev_activate_aerodynamics_event.read() {
-        // info!("activate aerodynamics {:?}", ev.entity);
-        if let Ok((mut state, mut force, transform, velo)) = ball_physics_query.get_mut(ev.entity) {
-            // info!("query aerodynamics");
+        info!("activate aerodynamics {:?}", ev.entity);
+        if let Ok((mut state, transform, velo)) = ball_physics_query.get_mut(ev.entity) {
+            info!("query aerodynamics");
             if !state.active {
                 // just in case
-                force.force = Vec3::ZERO;
+                // force.force = Vec3::ZERO;
                 //
                 *state = BaseballFlightState::from_params(
                     transform

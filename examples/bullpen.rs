@@ -27,15 +27,15 @@ fn main() {
     app.insert_resource(Time::<Fixed>::from_hz(60.0));
 
     let mut rapier_config = RapierConfiguration::new(1.);
-    rapier_config.timestep_mode = TimestepMode::Fixed {
-        dt: 1. / 60.,
-        substeps: 1,
-    };
-    // rapier_config.timestep_mode = TimestepMode::Variable {
-    //     max_dt: 1.0 / 60.0,
-    //     time_scale: 1.,
+    // rapier_config.timestep_mode = TimestepMode::Fixed {
+    //     dt: 1. / 60.,
     //     substeps: 1,
     // };
+    rapier_config.timestep_mode = TimestepMode::Variable {
+        max_dt: 1.0 / 60.0,
+        time_scale: 1.,
+        substeps: 1,
+    };
 
     app.add_plugins(RapierPhysicsPlugin::<NoUserData>::default().with_default_system_setup(true))
         .insert_resource(rapier_config);
@@ -158,7 +158,7 @@ fn spawn_ball(
     let gyro_pole = GyroPole::default();
     let spin_efficiency: f32 = 1.0;
     let velocity: f32 = 96. * MPH_TO_FTS;
-    let spin_rate: f32 = -2400.;
+    let spin_rate: f32 = 2400.;
     let seam_z_angle: f32 = PI / 2.;
     let tilt = Tilt::from_hour_mintes(12, 0);
 
@@ -178,44 +178,80 @@ fn spawn_ball(
         spin_z_0 * RPM_TO_RADS,
     );
 
-    let entity = commands
-        .spawn((
-            Name::new("ball"),
-            //
-            BaseballFlightBundle::default(),
-            //
-            ExternalForce::default(),
-            TransformBundle::from_transform(Transform::from_translation(Vec3::new(
-                0.48, 1.82, 16.764,
-            ))),
-            Velocity {
-                linvel: (-Vec3::Y * velocity).from_baseball_coord_to_bevy(),
-                angvel: spin.from_baseball_coord_to_bevy(),
-            },
-            //
-            Restitution {
-                coefficient: 0.546,
-                combine_rule: CoefficientCombineRule::Min,
-            },
-            //
-            InheritedVisibility::VISIBLE,
-        ))
-        .with_children(|child| {
-            child.spawn((PbrBundle {
-                mesh: meshes.add(Sphere::new(0.03).mesh().uv(32, 18)),
-                material: materials.add(StandardMaterial {
-                    base_color: Color::BLACK,
-                    perceptual_roughness: 1.0,
-                    ..default()
-                }),
-                ..default()
-            },));
-        })
-        .id();
+    // let entity = commands
+    //     .spawn((
+    //         Name::new("ball"),
+    //         //
+    //         BaseballFlightBundle::default(),
+    //         //
+    //         ExternalForce::default(),
+    //         TransformBundle::from_transform(Transform::from_translation(Vec3::new(
+    //             0.48, 1.82, 16.764,
+    //         ))),
+    //         Velocity {
+    //             linvel: (-Vec3::Y * velocity).from_baseball_coord_to_bevy(),
+    //             angvel: spin.from_baseball_coord_to_bevy(),
+    //         },
+    //         //
+    //         Restitution {
+    //             coefficient: 0.546,
+    //             combine_rule: CoefficientCombineRule::Min,
+    //         },
+    //         //
+    //         InheritedVisibility::VISIBLE,
+    //     ))
+    //     .with_children(|child| {
+    //         child.spawn((PbrBundle {
+    //             mesh: meshes.add(Sphere::new(0.03).mesh().uv(32, 18)),
+    //             material: materials.add(StandardMaterial {
+    //                 base_color: Color::BLACK,
+    //                 perceptual_roughness: 1.0,
+    //                 ..default()
+    //             }),
+    //             ..default()
+    //         },));
+    //     })
+    //     .id();
 
     ev_activate_aerodynamics.send(ActivateAerodynamicsEvent {
-        entity,
+        // entity,
         seam_y_angle: 0.,
         seam_z_angle,
+        entity: {
+            commands
+                .spawn((
+                    Name::new("ball"),
+                    //
+                    BaseballFlightBundle::default(),
+                    //
+                    ExternalForce::default(),
+                    TransformBundle::from_transform(Transform::from_translation(Vec3::new(
+                        0.48, 1.82, 16.764,
+                    ))),
+                    Velocity {
+                        linvel: (-Vec3::Y * velocity).from_baseball_coord_to_bevy(),
+                        angvel: spin.from_baseball_coord_to_bevy(),
+                    },
+                    //
+                    Restitution {
+                        coefficient: 0.546,
+                        combine_rule: CoefficientCombineRule::Min,
+                    },
+                    //
+                    InheritedVisibility::VISIBLE,
+                ))
+                .with_children(|child| {
+                    child.spawn((PbrBundle {
+                        mesh: meshes.add(Sphere::new(0.03).mesh().uv(32, 18)),
+                        material: materials.add(StandardMaterial {
+                            base_color: Color::BLACK,
+                            perceptual_roughness: 1.0,
+                            ..default()
+                        }),
+                        ..default()
+                    },));
+                })
+                .id()
+        },
     });
 }
