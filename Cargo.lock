@@ -269,7 +269,7 @@ dependencies = [
 
 [[package]]
 name = "bevy-rapier-baseball-flight"
-version = "0.0.1-alpha.1"
+version = "0.0.1-alpha.2"
 dependencies = [
  "bevy",
  "bevy_flycam",
