@@ -28,7 +28,7 @@ fn main() {
 
     let mut rapier_config = RapierConfiguration::new(1.);
     rapier_config.timestep_mode = TimestepMode::Fixed {
-        dt: 1. / 1000.,
+        dt: 1. / 60.,
         substeps: 1,
     };
     // rapier_config.timestep_mode = TimestepMode::Variable {

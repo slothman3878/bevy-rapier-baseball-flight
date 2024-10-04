@@ -30,9 +30,9 @@ pub struct BaseballFlightPlugin {
 
 impl Plugin for BaseballFlightPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<ActivateAerodynamicsEvent>();
-        app.add_event::<PostActivateAerodynamicsEvent>();
-        app.add_event::<DisableAerodynamicsEvent>();
+        app.add_event::<ActivateAerodynamicsEvent>()
+            .add_event::<PostActivateAerodynamicsEvent>()
+            .add_event::<DisableAerodynamicsEvent>();
 
         app.register_type::<BaseballFlightState>();
 

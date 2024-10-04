@@ -90,7 +90,6 @@ pub(crate) fn activate_aerodynamics(
     mut ball_physics_query: Query<(
         &mut BaseballFlightState,
         &mut ExternalForce,
-        &mut GravityScale,
         &Transform,
         &Velocity,
     )>,
@@ -98,13 +97,12 @@ pub(crate) fn activate_aerodynamics(
     mut ev_post_activate_aerodynamics_event: EventWriter<PostActivateAerodynamicsEvent>,
 ) {
     for ev in ev_activate_aerodynamics_event.read() {
-        if let Ok((mut state, mut force, mut gravity_scale, transform, velo)) =
-            ball_physics_query.get_mut(ev.entity)
-        {
+        // info!("activate aerodynamics {:?}", ev.entity);
+        if let Ok((mut state, mut force, transform, velo)) = ball_physics_query.get_mut(ev.entity) {
+            // info!("query aerodynamics");
             if !state.active {
                 // just in case
                 force.force = Vec3::ZERO;
-                gravity_scale.0 = 0.;
                 //
                 *state = BaseballFlightState::from_params(
                     transform

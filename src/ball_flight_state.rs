@@ -84,7 +84,6 @@ impl BaseballFlightState {
         self.v = velocity;
 
         self.update_state(config, delta_t);
-
         let distance = self.translation - translation;
 
         (self.v * self.v - velocity * velocity) / (2. * distance)
