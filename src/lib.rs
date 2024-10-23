@@ -95,7 +95,7 @@ pub enum AeroDeactivationSet {
     PostDeactivation,
 }
 
-#[derive(Debug, Clone, Copy, Reflect)]
+#[derive(Debug, Clone, Copy, Reflect, PartialEq, Eq)]
 pub enum GyroPole {
     Right,
     Left,
@@ -115,6 +115,12 @@ impl Tilt {
         let rad_hrs = (h - 3) as f32 * PI_32 / 6.;
         let rad_mins = m as f32 * PI_32 / 360.;
         Self(rad_hrs + rad_mins)
+    }
+
+    pub fn to_hour_minutes(&self) -> (i8, i8) {
+        let hrs = ((self.0 * 6.) / PI_32 + 3.).floor() as i8;
+        let mins = ((self.0 * 360.) / (PI_32 * 6.)).floor() as i8;
+        (hrs, mins)
     }
 
     pub fn get(&self) -> f32 {
