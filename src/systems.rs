@@ -79,7 +79,7 @@ fn get_delta_t(time_fixed: &Res<Time<Fixed>>, rapier_config: &Res<RapierConfigur
             time_scale as f64 * time_fixed.delta_seconds_f64()
         }
         TimestepMode::Fixed { dt, .. } => dt as f64,
-        _ => 1.,
+        TimestepMode::Interpolated { dt, time_scale, .. } => time_scale as f64 * dt as f64,
     };
     (delta_t * 1000.).floor() / 1000.
 }
