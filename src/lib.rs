@@ -1,13 +1,15 @@
 mod ball_flight_state;
 mod common;
 mod components;
+mod errors;
 mod events;
 mod resources;
 mod systems;
 
 pub mod prelude {
     pub use super::{
-        components::*, constants::*, events::*, utils::*, BaseballFlightPlugin, GyroPole, Tilt,
+        components::*, constants::*, errors::*, events::*, utils::*, BaseballFlightPlugin,
+        GyroPole, Tilt,
     };
 }
 
@@ -19,6 +21,7 @@ pub(crate) use bevy::{math::*, prelude::*}; // glam
 pub(crate) use bevy_rapier3d::prelude::*; // nalgebra
 pub(crate) use common::*;
 pub(crate) use constants::*;
+pub(crate) use errors::*;
 pub(crate) use events::*;
 pub(crate) use utils::*;
 
@@ -110,17 +113,27 @@ impl Default for GyroPole {
 #[derive(Debug, Reflect, Copy, Clone)]
 pub struct Tilt(f32);
 impl Tilt {
-    pub fn from_hour_mintes(h: i8, m: i8) -> Self {
-        assert!(h <= 12 && h > 0);
+    pub fn from_hour_mintes(h: i8, m: i8) -> Result<Self> {
+        if h > 12 || h <= 0 {
+            return Err(BaseballFlightError::InvalidInput(
+                "hr should be within the range of 1 and 12".into(),
+            ));
+        }
+        if m < 0 || m > 59 {
+            return Err(BaseballFlightError::InvalidInput(
+                "min should be within the range of 0 and 59".into(),
+            ));
+        }
         let rad_hrs = (h - 3) as f32 * PI_32 / 6.;
         let rad_mins = m as f32 * PI_32 / 360.;
-        Self(rad_hrs + rad_mins)
+        Ok(Self(rad_hrs + rad_mins))
     }
 
     pub fn to_hour_minutes(&self) -> (i8, i8) {
-        let hrs = ((self.0 * 6.) / PI_32 + 3.).floor() as i8;
-        let mins = ((self.0 * 360.) / (PI_32 * 6.)).floor() as i8;
-        (hrs, mins)
+        let total_hours = (self.0 * 6.0 / PI_32) + 3.0;
+        let hrs = total_hours.floor() as i8;
+        let mins = ((total_hours.fract() * 60.0).round() as i8) % 60;
+        ((hrs - 1) % 12 + 1, mins)
     }
 
     pub fn get(&self) -> f32 {

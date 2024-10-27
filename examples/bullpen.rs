@@ -160,7 +160,12 @@ fn spawn_ball(
     let velocity: f32 = 96. * MPH_TO_FTS;
     let spin_rate: f32 = 2400.;
     let seam_z_angle: f32 = PI / 2.;
-    let tilt = Tilt::from_hour_mintes(12, 0);
+    let tilt = match Tilt::from_hour_mintes(12, 0) {
+        Ok(tilt_) => tilt_,
+        Err(e) => {
+            panic!("tilt calculation panic: {}", e);
+        }
+    };
 
     let fixed_spin_rate = if spin_rate == 0. { 1. } else { spin_rate };
 
