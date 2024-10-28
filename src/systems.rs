@@ -53,8 +53,6 @@ pub(crate) fn _apply_physics_option_3(
     )>,
 ) {
     let delta_t = get_delta_t(&time_fixed, &rapier_config);
-    // info!("time fixed {:?}", time_fixed.delta_seconds_f64());
-    // info!("delta_t {:?}", delta_t);
     for (mut state, transform, velo, mut force) in &mut query_baseball {
         if state.active {
             let a = state.update_state_and_get_acceleration(
@@ -67,6 +65,7 @@ pub(crate) fn _apply_physics_option_3(
                 delta_t,
             );
             force.force = a.from_baseball_coord_to_bevy().as_vec3() * MASS;
+            // }
         } else {
             // info!("inactive aerodynamics");
         }
@@ -106,6 +105,11 @@ pub(crate) fn activate_aerodynamics(
                     velo.angvel.from_bevy_to_baseball_coord().as_dvec3(),
                     ev.seam_y_angle,
                     ev.seam_z_angle,
+                    ev.record_times.clone(),
+                    //
+                    |(front_z, back_z)| -> (f64, f64) {
+                        ((front_z * M_TO_FEET) as f64, (back_z * M_TO_FEET) as f64)
+                    }(ev.strikezone_panels_z),
                 );
                 //
                 ev_post_activate_aerodynamics_event.send(PostActivateAerodynamicsEvent(ev.entity));

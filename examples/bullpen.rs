@@ -222,6 +222,8 @@ fn spawn_ball(
         // entity,
         seam_y_angle: 0.,
         seam_z_angle,
+        record_times: vec![0.1, 0.2, 0.3],
+        strikezone_panels_z: (0., 0.),
         entity: {
             commands
                 .spawn((

@@ -8,8 +8,8 @@ mod systems;
 
 pub mod prelude {
     pub use super::{
-        components::*, constants::*, errors::*, events::*, utils::*, BaseballFlightPlugin,
-        GyroPole, Tilt,
+        ball_flight_state::BaseballFlightState, components::*, constants::*, errors::*, events::*,
+        utils::*, BaseballFlightPlugin, GyroPole, Tilt,
     };
 }
 
@@ -37,7 +37,7 @@ impl Plugin for BaseballFlightPlugin {
             .add_event::<PostActivateAerodynamicsEvent>()
             .add_event::<DisableAerodynamicsEvent>();
 
-        app.register_type::<BaseballFlightState>();
+        // app.register_type::<BaseballFlightState>();
 
         app.insert_resource(BaseballPluginConfig {
             ssw_on: self.ssw_on,
@@ -52,6 +52,15 @@ impl Plugin for BaseballFlightPlugin {
                 AeroActivationSet::PreActivation,
                 AeroActivationSet::Activation,
                 AeroActivationSet::PostActivation,
+            )
+                .chain(),
+        )
+        .configure_sets(
+            Update,
+            (
+                UpdateBaseballFlightStateSet::PreUpdate,
+                UpdateBaseballFlightStateSet::Update,
+                UpdateBaseballFlightStateSet::PostUpdate,
             )
                 .chain(),
         )
@@ -78,9 +87,15 @@ impl Plugin for BaseballFlightPlugin {
                 .in_set(AeroDeactivationSet::Deactivation),
         );
 
-        // app.add_systems(Update, _apply_physics_option_1);
-        // app.add_systems(Update, _apply_physics_option_2);
-        app.add_systems(Update, _apply_physics_option_3);
+        app.add_systems(
+            Update,
+            (
+                // _apply_physics_option_1,
+                // _apply_physics_option_2,
+                _apply_physics_option_3
+            )
+                .in_set(UpdateBaseballFlightStateSet::Update),
+        );
     }
 }
 
@@ -96,6 +111,13 @@ pub enum AeroDeactivationSet {
     PreDeactivation,
     Deactivation,
     PostDeactivation,
+}
+
+#[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
+pub enum UpdateBaseballFlightStateSet {
+    PreUpdate,
+    Update,
+    PostUpdate,
 }
 
 #[derive(Debug, Clone, Copy, Reflect, PartialEq, Eq)]

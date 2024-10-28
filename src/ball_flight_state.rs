@@ -1,17 +1,33 @@
 use crate::*;
 
-#[derive(Debug, Component, Reflect, Clone, Default)]
+#[derive(Debug, Component, Clone, Default)]
 pub struct BaseballFlightState {
-    pub translation: DVec3,
-    pub v: DVec3,
-    pub spin: DVec3,
-    pub seams: Vec<DVec3>,
-    pub time_elapsed: f64,
+    pub(crate) translation: DVec3,
+    pub(crate) v: DVec3,
+    pub(crate) spin: DVec3,
+    pub(crate) seams: Vec<DVec3>,
+    pub(crate) time_elapsed: f64,
     //
-    pub active: bool,
+    pub(crate) active: bool,
+    // for recording purposes
+    pub(crate) record_on: bool,
+    pub(crate) record_times: Vec<f64>,
+    pub(crate) record_positions: Vec<DVec3>,
+    // strikezone recording purposes (front, back)
+    pub(crate) strikezone_panels_y: (f64, f64),
+    pub(crate) pos_at_strikezone_panels_y: (DVec3, DVec3),
 }
 
 impl BaseballFlightState {
+    pub fn get_pos_at_strikezone_panels_z(&self) -> (Vec3, Vec3) {
+        // record strikezone position
+        let (pos_front, pos_back) = self.pos_at_strikezone_panels_y;
+        (
+            pos_front.from_baseball_coord_to_bevy().as_vec3(),
+            pos_back.from_baseball_coord_to_bevy().as_vec3(),
+        )
+    }
+
     pub(crate) fn deactivate(&mut self) {
         self.active = false;
         self.time_elapsed = 0.;
@@ -29,7 +45,11 @@ impl BaseballFlightState {
         // in rad
         seam_z_angle_: f32,
         // other parameters...
+        record_times_: Vec<f64>,
+        //
+        strikezone_panels_y: (f64, f64),
     ) -> Self {
+        // Return owned value instead of reference
         let translation = translation_;
         let v = velocity_;
         let spin = spin_;
@@ -62,13 +82,24 @@ impl BaseballFlightState {
             })
             .collect::<Vec<_>>();
 
+        let default_record_positions = record_times_
+            .iter()
+            .map(|_: &f64| DVec3::ZERO)
+            .collect::<Vec<_>>();
+
         Self {
+            // Return the value directly, not a reference
             translation,
             v,
             spin,
             seams: seams_adjsuted,
             time_elapsed: 0.,
             active: true,
+            record_on: false,
+            record_times: record_times_,
+            record_positions: default_record_positions,
+            strikezone_panels_y,
+            pos_at_strikezone_panels_y: (DVec3::ZERO, DVec3::ZERO),
         }
     }
 
@@ -127,6 +158,32 @@ impl BaseballFlightState {
 
             self.v += DVec3::new(a.x, a.y, a.z - 32.2) * T_STEP;
             self.translation += self.v * T_STEP;
+
+            // record position
+            if self.record_on {
+                if let Some(index) = self
+                    .record_times
+                    .iter()
+                    .position(|&t| t > self.time_elapsed)
+                {
+                    self.record_positions[index] = self.translation;
+                }
+            }
+            // record strikezone position
+            if (self.translation.y - self.strikezone_panels_y.0).abs() < 0.5 {
+                if (self.pos_at_strikezone_panels_y.0.y - self.strikezone_panels_y.0).abs()
+                    > (self.translation.y - self.strikezone_panels_y.0).abs()
+                {
+                    self.pos_at_strikezone_panels_y.0 = self.translation;
+                }
+            }
+            if (self.translation.y - self.strikezone_panels_y.1).abs() < 0.5 {
+                if (self.pos_at_strikezone_panels_y.1.y - self.strikezone_panels_y.1).abs()
+                    > (self.translation.y - self.strikezone_panels_y.1).abs()
+                {
+                    self.pos_at_strikezone_panels_y.1 = self.translation;
+                }
+            }
         }
     }
 
