@@ -4,8 +4,10 @@ pub(crate) mod constants {
     pub(crate) use std::f32::consts::PI as PI_32;
     pub(crate) use std::f64::consts::PI as PI_64;
 
-    pub(crate) const M_TO_FEET: f32 = 3.28084;
-    pub(crate) const KG_TO_IBS: f32 = 2.20462;
+    pub const M_TO_FEET: f32 = 3.28084;
+    pub const KG_TO_IBS: f32 = 2.20462;
+
+    pub const KMH_TO_MPH: f32 = 0.621371;
 
     pub const RPM_TO_RADS: f32 = 2. * PI_32 / 60.;
     pub const MPH_TO_FTS: f32 = 1.467;
