@@ -79,4 +79,27 @@ pub(crate) mod utils {
             swap_coordinates_dvec3(self) / (M_TO_FEET as f64)
         }
     }
+
+    pub fn get_angular_velocity_from_parameters(
+        tilt: Tilt,
+        spin_efficiency: f32,
+        spin_rate: f32,
+        gyro_pole: GyroPole,
+    ) -> Vec3 {
+        let fixed_spin_rate = if spin_rate == 0. { 1. } else { spin_rate };
+
+        let gyro = match gyro_pole {
+            GyroPole::Left => spin_efficiency.asin(),
+            GyroPole::Right => std::f32::consts::PI - spin_efficiency.asin(),
+        };
+
+        let spin_x_0 = fixed_spin_rate * (spin_efficiency * tilt.get().sin());
+        let spin_y_0 = fixed_spin_rate * gyro.cos(); // ((1. - spin_efficiency.powi(2)).sqrt());
+        let spin_z_0 = -fixed_spin_rate * (spin_efficiency * tilt.get().cos());
+        Vec3::new(
+            spin_x_0 * RPM_TO_RADS,
+            spin_y_0 * RPM_TO_RADS, // - RPM_TO_RAD ???
+            spin_z_0 * RPM_TO_RADS,
+        )
+    }
 }
