@@ -81,6 +81,7 @@ impl BaseballFlightState {
                 )
             })
             .collect::<Vec<_>>();
+        // info!("seams_adjsuted {:?}", seams_adjsuted);
 
         let default_record_positions = record_times_
             .iter()
