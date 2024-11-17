@@ -20,15 +20,7 @@ bevy_rapier3d = { version = "^0.27.0", features = [
   "simd-stable",
   "debug-render-3d",
 ] }
-bevy = { version = "^0.14.0", default-features = false, features = [
-  "bevy_state",
-  "bevy_asset",
-  "bevy_color",
-  "bevy_pbr",
-  "bevy_scene",
-  "x11",
-  "tonemapping_luts",
-] }
+bevy = { version = "^0.14.0", default-features = false }
 serde = "1.0.213"
 
 [dev-dependencies]
